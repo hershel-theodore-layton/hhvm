@@ -35,7 +35,8 @@ namespace HH {
 
   } // namespace ImplicitContext
 
-  <<__Sealed(FBMemoAgnosticImplicitContext::class)>>
+  // Commented out next line to avoid referencing Facebook www code in OSS:
+  // <<__Sealed(FBMemoAgnosticImplicitContext::class)>>
   abstract class MemoAgnosticImplicitContext extends ImplicitContextBase {
     final protected static async function runWithAsync<Tout>(
       this::TData $context,
@@ -48,7 +49,8 @@ namespace HH {
     )[this::CRun, ctx $f]: Tout;
   }
 
-  <<__Sealed(FBMemoSensitiveImplicitContext::class)>>
+  // Commented out next line to avoid referencing Facebook www code in OSS:
+  // <<__Sealed(FBMemoSensitiveImplicitContext::class)>>
   abstract class MemoSensitiveImplicitContext extends ImplicitContextBase {
     abstract const type TData as IPureMemoizeParam;
 
