@@ -83,9 +83,6 @@ add_subdirectory(fb-mysql)
 add_subdirectory(squangle)
 
 if (ENABLE_MCROUTER)
-  # Build dependency of mcrouter
-  add_subdirectory(forks/ragel)
-
   add_subdirectory(mcrouter)
 endif()
 

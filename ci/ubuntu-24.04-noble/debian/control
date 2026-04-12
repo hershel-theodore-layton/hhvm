@@ -66,6 +66,7 @@ Build-Depends:
   libxxhash-dev,
   libyaml-dev,
   python3,
+  ragel,
   re2c,
   rsync,
   tzdata,

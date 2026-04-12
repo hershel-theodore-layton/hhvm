@@ -3,6 +3,9 @@ add_library(mcrouter INTERFACE)
 include(ExternalProject)
 include(HPHPFunctions)
 
+find_program(RAGEL_EXECUTABLE NAMES ragel REQUIRED)
+message(STATUS "Using system Ragel: ${RAGEL_EXECUTABLE}")
+
 set(
   MCROUTER_DEPS
   boost
@@ -15,7 +18,6 @@ set(
 )
 add_library(mcrouter_deps INTERFACE)
 target_link_libraries(mcrouter_deps INTERFACE ${MCROUTER_DEPS})
-add_dependencies(mcrouter_deps ragel)
 
 get_target_property(BOOST_INCLUDE_DIR boost INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(BOOST_LIBRARIES boost INTERFACE_LINK_LIBRARIES)
@@ -59,7 +61,7 @@ ExternalProject_Add(
     "-DJEMALLOC_INCLUDE_DIR=$<TARGET_PROPERTY:jemalloc,INTERFACE_INCLUDE_DIRECTORIES>"
     "-DOPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}"
 
-    "-Dragel_EXECUTABLE=$<TARGET_FILE:ragel>"
+    "-DRAGEL_EXECUTABLE=${RAGEL_EXECUTABLE}"
 
     "-Dgflags_DIR=${gflags_DIR}"
 
@@ -70,7 +72,7 @@ ExternalProject_Add(
     "-DFBThrift_DIR=${THRIFT_INSTALL_DIR}/lib/cmake/fbthrift"
     "-Dwangle_DIR=${WANGLE_INSTALL_DIR}/lib/cmake/wangle"
     "-Dmvfst_DIR=${MVFST_INSTALL_DIR}/lib/cmake/mvfst"
-  DEPENDS ${MCROUTER_DEPS} ragel
+  DEPENDS ${MCROUTER_DEPS}
   EXCLUDE_FROM_ALL
 )
 
