@@ -3,6 +3,13 @@ add_library(mcrouter INTERFACE)
 include(ExternalProject)
 include(HPHPFunctions)
 
+set(
+  MCROUTER_OSS_COMPILE_DEFINITIONS
+  LIBMC_FBTRACE_DISABLE
+  DISABLE_COMPRESSION
+  MCROUTER_OSS_BUILD
+)
+
 find_program(RAGEL_EXECUTABLE NAMES ragel REQUIRED)
 message(STATUS "Using system Ragel: ${RAGEL_EXECUTABLE}")
 
@@ -87,6 +94,7 @@ target_include_directories(
   "${BINARY_DIR}"
   "${BINARY_DIR}/thrift-gen/src"
 )
+target_compile_definitions(mcrouter INTERFACE ${MCROUTER_OSS_COMPILE_DEFINITIONS})
 
 list(APPEND MCROUTER_INSTALL_TARGETS
   mcroutercore

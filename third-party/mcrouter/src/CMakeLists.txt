@@ -155,6 +155,11 @@ message(STATUS "Found Ragel: ${RAGEL_EXECUTABLE}")
 # Create mcrouter_deps INTERFACE library for dependencies
 # =============================================================================
 add_library(mcrouter_deps INTERFACE)
+target_compile_definitions(mcrouter_deps INTERFACE
+  LIBMC_FBTRACE_DISABLE
+  DISABLE_COMPRESSION
+  MCROUTER_OSS_BUILD
+)
 target_link_libraries(mcrouter_deps INTERFACE
   Folly::folly
   wangle::wangle
