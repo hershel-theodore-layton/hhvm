@@ -43,6 +43,7 @@ find_package(Boost 1.69.0 REQUIRED
     filesystem
     program_options
     regex
+    atomic
     thread
 )
 

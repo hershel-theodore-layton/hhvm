@@ -46,6 +46,7 @@ set(FOLLY_BOOST_COMPONENTS
     regex
 )
 if(WIN32)
+  list(APPEND FOLLY_BOOST_COMPONENTS atomic)
   list(APPEND FOLLY_BOOST_COMPONENTS thread)
 endif()
 

@@ -137,6 +137,7 @@ find_package(Boost 1.69.0 REQUIRED
     program_options
     regex
     system
+    atomic
     thread
 )
 find_package(OpenSSL REQUIRED)

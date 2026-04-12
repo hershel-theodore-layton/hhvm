@@ -11,6 +11,7 @@ set(
   program_options
   regex
   system
+  atomic
   thread
 )
 if(FORCE_BUNDLED_BOOST OR CLANG_FORCE_LIBCPP)

@@ -22,5 +22,5 @@ index d2f89b48e..773f21188 100644
 -find_dependency(Fizz)
 +find_dependency(fizz)
  find_dependency(Threads)
- find_dependency(Boost COMPONENTS iostreams system thread filesystem regex context)
+find_dependency(Boost COMPONENTS iostreams system atomic thread filesystem regex context)
  
