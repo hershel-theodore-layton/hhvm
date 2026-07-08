@@ -106,3 +106,9 @@ CPackSourceConfig.cmake
 
 # clangd JSON Compilation Database
 compile_commands.json
+
+obj-x86_64-linux-gnu/
+debian/tmp
+debian/hhvm/opt
+debian/hhvm-dev/opt
+debian/.debhelper

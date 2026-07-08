@@ -20,6 +20,10 @@ message(STATUS "Using third-party bundled TBB")
 include(ExternalProject)
 
 set(TBB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(TBB_COMPILER gcc)
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(TBB_COMPILER clang)
+endif()
 set(TBB_STATIC_LIB_PATH $<IF:$<CONFIG:Debug>,_debug,_release>/${CMAKE_STATIC_LIBRARY_PREFIX}tbb$<$<CONFIG:Debug>:_debug>${CMAKE_STATIC_LIBRARY_SUFFIX})
 
 ExternalProject_Add(
@@ -28,11 +32,12 @@ ExternalProject_Add(
   SOURCE_DIR "${TBB_ROOT}"
   CONFIGURE_COMMAND ""
   PATCH_COMMAND
-    patch -p4 < "${CMAKE_CURRENT_SOURCE_DIR}/pic_compile.patch"
+    /bin/sh -c "grep -q '^PIC_KEY = -fPIC' '${TBB_ROOT}/build/linux.gcc.inc' || patch -p4 < '${CMAKE_CURRENT_SOURCE_DIR}/pic_compile.patch'"
   BUILD_COMMAND
     cd <SOURCE_DIR> && make
       work_dir=<INSTALL_DIR>
       tbb_root=${TBB_ROOT}
+      compiler=${TBB_COMPILER}
       CC=${CMAKE_C_COMPILER}
       CXX=${CMAKE_CXX_COMPILER}
       CXXFLAGS=${CMAKE_CXX_FLAGS}
@@ -42,7 +47,11 @@ ExternalProject_Add(
 )
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
- execute_process(COMMAND "patch" "-p1" "-f" INPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/clang_fix.patch")
+  execute_process(
+    COMMAND
+      /bin/sh -c "grep -q '^    DSE_KEY =$' '${TBB_ROOT}/build/linux.gcc.inc' || patch -p1 -f < '${CMAKE_CURRENT_SOURCE_DIR}/clang_fix.patch'"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  )
 endif()
 
 add_dependencies(tbb bundled_tbb)
