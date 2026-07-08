@@ -1,0 +1,5 @@
+hhvm (2026.06.05-1~noble) noble; urgency=medium
+
+  * Build HHVM OSS packages for Ubuntu noble on 20260605-mszabo-wikia base.
+
+ -- Hershel Theodore Layton <81193606+hershel-theodore-layton@users.noreply.github.com>  Wed, 08 Jul 2026 15:01:55 +0000

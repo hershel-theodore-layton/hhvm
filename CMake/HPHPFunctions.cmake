@@ -189,6 +189,7 @@ endfunction(embed_all_systemlibs)
 # it's available, otherwise, it leaves the chrpath alone
 function(HHVM_INSTALL TARGET DEST)
   get_target_property(TY ${TARGET} TYPE)
+  set(LOC "$<TARGET_FILE:${TARGET}>")
   if (FOUND_CHRPATH)
     get_target_property(RPATH ${TARGET} INSTALL_RPATH)
     if (NOT RPATH STREQUAL "RPATH-NOTFOUND")
