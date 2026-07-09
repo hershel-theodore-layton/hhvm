@@ -25,8 +25,18 @@ endif (LIBDWARF_LIBRARIES AND LIBDWARF_INCLUDE_DIRS)
 find_package(PkgConfig)
 pkg_check_modules(PkgConfig_LibDwarf QUIET libdwarf)
 
+foreach(_prefix ${CMAKE_PREFIX_PATH})
+  list(APPEND LIBDWARF_PREFIX_INCLUDE_PATHS
+    "${_prefix}/include"
+    "${_prefix}/include/libdwarf")
+  list(APPEND LIBDWARF_PREFIX_LIBRARY_PATHS
+    "${_prefix}/lib"
+    "${_prefix}/lib64")
+endforeach()
+
 set(
   LIBDWARF_INCLUDE_PATHS
+  ${LIBDWARF_PREFIX_INCLUDE_PATHS}
   ${PkgConfig_LibDwarf_INCLUDE_DIRS}
   /usr/include
   /usr/include/libdwarf
@@ -59,6 +69,7 @@ find_path (LIBDWARF_PRODUCER_PATHS
 
 set(
   LIBDWARF_LIBRARY_PATHS
+  ${LIBDWARF_PREFIX_LIBRARY_PATHS}
   /usr/lib
   /usr/local/lib
   /opt/local/lib
@@ -87,7 +98,7 @@ if (LIBDWARF_USE_NEW_PRODUCER_API)
     PATHS
       ${LIBDWARF_LIBRARY_PATHS})
 
-  list(APPEND LIBDWARF_LIBRARIES ${LIBDWARFP_LIBRARIES})
+  list(PREPEND LIBDWARF_LIBRARIES ${LIBDWARFP_LIBRARIES})
 endif()
 
 include (FindPackageHandleStandardArgs)

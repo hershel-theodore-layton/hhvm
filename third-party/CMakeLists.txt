@@ -111,13 +111,24 @@ foreach(MODULE ${THIRD_PARTY_MODULES})
   add_subdirectory(${MODULE})
   TP_INSTALL_HEADERS(${MODULE} ${MODULE} ${MODULE})
 endforeach()
+
+if(TARGET mbfl)
+  target_compile_definitions(mbfl PRIVATE
+    HAVE_STDLIB_H=1
+    HAVE_STRINGS_H=1
+    HAVE_STRING_H=1)
+endif()
+
 set(THIRD_PARTY_INCLUDE_PATHS ${EXTRA_INCLUDE_PATHS} CACHE INTERNAL "" FORCE)
 
 if(NOT PCRE_LIBRARY)
-  target_include_directories(pcre PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/forks/pcre")
+  target_include_directories(
+    pcre
+    PUBLIC
+    "${CMAKE_CURRENT_BINARY_DIR}/forks/pcre"
+    "${CMAKE_CURRENT_SOURCE_DIR}/forks/pcre")
   target_compile_definitions(pcre PUBLIC "PCRE_STATIC=1")
 endif()
 
 ##### --- new style, but only depends on old style --- #####
 add_subdirectory(watchman)
-
