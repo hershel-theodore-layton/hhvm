@@ -50,10 +50,32 @@ set(HACK_BUILD_ROOT "${DUNE_BUILD_DIR}/default")
 
 get_target_property(OPAM_EXECUTABLE opam IMPORTED_LOCATION)
 
+set(HACK_OPAM_DEPENDS opam opam_setup.sh)
+set(HACK_OPAM_ENV)
+if (TARGET pcre)
+  set(HHVM_PCRE_PKGCONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/pkgconfig")
+  file(MAKE_DIRECTORY "${HHVM_PCRE_PKGCONFIG_DIR}")
+  file(WRITE "${HHVM_PCRE_PKGCONFIG_DIR}/libpcre.pc"
+"prefix=${CMAKE_BINARY_DIR}/third-party/forks/pcre
+exec_prefix=\${prefix}
+libdir=\${prefix}
+includedir=${CMAKE_SOURCE_DIR}/third-party/forks/pcre
+
+Name: libpcre
+Description: HHVM bundled PCRE
+Version: 8.45
+Libs: -L\${libdir} -lpcre
+Cflags: -I\${prefix} -I\${includedir}
+")
+  list(APPEND HACK_OPAM_DEPENDS pcre)
+  list(APPEND HACK_OPAM_ENV "PKG_CONFIG_PATH=${HHVM_PCRE_PKGCONFIG_DIR}:$ENV{PKG_CONFIG_PATH}")
+endif()
+
 add_custom_command(
   OUTPUT "${OPAM_STAMP_FILE}"
-  DEPENDS opam opam_setup.sh
+  DEPENDS ${HACK_OPAM_DEPENDS}
   COMMAND
+    ${CMAKE_COMMAND} -E env ${HACK_OPAM_ENV}
     ${CMAKE_CURRENT_SOURCE_DIR}/opam_setup.sh
     "${OPAM_EXECUTABLE}"
     "${DUNE_BUILD_DIR}"

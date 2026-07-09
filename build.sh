@@ -6,14 +6,64 @@ export DEBIAN_FRONTEND=noninteractive
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 
+usage() {
+  cat <<'USAGE'
+Usage:
+  ./build.sh [--ubuntu-26.04]
+
+Build HHVM Debian packages. By default, build for Ubuntu 24.04.
+
+Options:
+  --ubuntu-26.04  Build for Ubuntu 26.04.
+  -h, --help      Show this help.
+USAGE
+}
+
+TARGET_UBUNTU_VERSION="24.04"
+DISTRO_DEFAULT="ubuntu-24.04-noble"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --ubuntu-26.04)
+      TARGET_UBUNTU_VERSION="26.04"
+      DISTRO_DEFAULT="ubuntu-26.04-resolute"
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+    *)
+      echo "Unexpected positional argument: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+if [ "$#" -ne 0 ]; then
+  echo "Unexpected positional argument: $1" >&2
+  usage >&2
+  exit 2
+fi
+
 if [ "$(id -u)" -ne 0 ]; then
   echo "build.sh must run as root in a fresh Ubuntu container." >&2
   exit 1
 fi
 
 . /etc/os-release
-if [ "${ID:-}" != "ubuntu" ] || [ "${VERSION_ID:-}" != "24.04" ]; then
-  echo "build.sh expects Ubuntu 24.04; found ${PRETTY_NAME:-unknown}." >&2
+if [ "${ID:-}" != "ubuntu" ] || [ "${VERSION_ID:-}" != "$TARGET_UBUNTU_VERSION" ]; then
+  echo "build.sh expects Ubuntu ${TARGET_UBUNTU_VERSION}; found ${PRETTY_NAME:-unknown}." >&2
   exit 1
 fi
 unset VERSION
@@ -35,7 +85,7 @@ branch_version() {
 
 JOBS="${JOBS:-$(nproc)}"
 OUT="${OUT:-/var/out}"
-DISTRO="${DISTRO:-ubuntu-24.04-noble}"
+DISTRO="${DISTRO:-$DISTRO_DEFAULT}"
 VERSION="${HHVM_VERSION:-$(branch_version)}"
 
 export JOBS OUT DISTRO VERSION

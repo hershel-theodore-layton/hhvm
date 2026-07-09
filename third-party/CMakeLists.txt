@@ -111,6 +111,14 @@ foreach(MODULE ${THIRD_PARTY_MODULES})
   add_subdirectory(${MODULE})
   TP_INSTALL_HEADERS(${MODULE} ${MODULE} ${MODULE})
 endforeach()
+
+if(TARGET mbfl)
+  target_compile_definitions(mbfl PRIVATE
+    HAVE_STDLIB_H=1
+    HAVE_STRINGS_H=1
+    HAVE_STRING_H=1)
+endif()
+
 set(THIRD_PARTY_INCLUDE_PATHS ${EXTRA_INCLUDE_PATHS} CACHE INTERNAL "" FORCE)
 
 if(NOT PCRE_LIBRARY)

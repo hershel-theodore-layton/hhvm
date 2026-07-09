@@ -34,6 +34,11 @@ HHVM_DEPENDENCIES = [
     "mcrouter",
 ]
 
+if os.environ.get("DISTRO") == "ubuntu-26.04-resolute":
+    # Ubuntu 26.04's libdwarf package no longer ships the producer API used by
+    # HHVM's JIT debug ELF writer.
+    HHVM_DEPENDENCIES.insert(0, "libdwarf")
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GETDEPS = os.path.join(REPO_ROOT, "build", "fbcode_builder", "getdeps.py")
 TOOLCHAIN = os.path.join(REPO_ROOT, "CMake", "HPHPClangToolchain.cmake")
