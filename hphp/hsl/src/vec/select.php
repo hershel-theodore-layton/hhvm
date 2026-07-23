@@ -10,7 +10,7 @@
 
 namespace HH\Lib\Vec;
 
-use namespace HH\Lib\{C, Dict, Keyset, _Private};
+use namespace HH\Lib\{C, Dict, Keyset, Math, _Private};
 
 /**
  * Returns a new vec containing only the elements of the first Traversable that
@@ -222,7 +222,8 @@ function sample<Tv>(Traversable<Tv> $traversable, int $sample_size): vec<Tv> {
  * - To take only the first `$n` elements, see `Vec\take()`.
  * - To drop the first `$n` elements, see `Vec\drop()`.
  *
- * Time complexity: O(n), where n is the size of the slice
+ * Time complexity: O(n), where n is the size of the slice, for small slices
+ * of vec and ConstVector inputs; O(offset + n) otherwise
  * Space complexity: O(n), where n is the size of the slice
  */
 function slice<Tv>(
@@ -230,8 +231,46 @@ function slice<Tv>(
   int $offset,
   ?int $length = null,
 )[]: vec<Tv> {
-  invariant($length === null || $length >= 0, 'Expected non-negative length.');
-  $offset = _Private\validate_offset_lower_bound($offset, C\count($container));
+  $length ??= Math\INT32_MAX;
+  invariant($length >= 0, 'Expected non-negative length.');
+  $container_count = C\count($container);
+  $offset =
+    _Private\validate_offset_lower_bound($offset, $container_count);
+
+  if ($container_count === 0 || $length === 0) {
+    return vec[];
+  }
+
+  if ($container is \ConstVector<_>) {
+    $container = vec($container);
+  }
+
+  // array_slice iterates through all elements from start to stop,
+  // this is O(offset + length), whereas vec can benefit from skipping
+  // to the right element with operator[](), to achieve O(length) runtime.
+  if ($container is vec<_>) {
+    $offset = Math\minva($offset, $container_count);
+    $available = $container_count - $offset;
+    $slice_length = Math\minva($length, $available);
+
+    if ($slice_length === $container_count) {
+      return $container;
+    }
+
+    // Slicing large slices in Hack could be more expensive than array_slice.
+    // These numbers are a heuristic. This tries to claim small slices, where:
+    // a) the amount of work is in the same ball park as dropping into c++ is.
+    // b) walking to $offset in array_slice would be the majority of the work.
+    if ($slice_length <= 16 || $slice_length <= ($offset >> 3)) {
+      $stop = $offset + $slice_length;
+      $result = vec[];
+      for (; $offset < $stop; ++$offset) {
+        $result[] = $container[$offset];
+      }
+      return $result;
+    }
+  }
+
   return
     cast_clear_legacy_array_mark(\array_slice($container, $offset, $length));
 }
