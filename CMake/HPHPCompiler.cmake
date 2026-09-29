@@ -99,6 +99,11 @@ if (HPHP_COMPILER_CLANG OR HPHP_COMPILER_GCC)
     endif()
   endif()
 
+  # Match the signed-char ABI used by the GCC ARM build.
+  if (IS_AARCH64 AND HPHP_COMPILER_CLANG)
+    list(APPEND GENERAL_OPTIONS "fsigned-char")
+  endif()
+
   # HHVM doesn't support building as a PIE.
   list(APPEND GENERAL_OPTIONS "no-pie")
 

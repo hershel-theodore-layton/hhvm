@@ -71,7 +71,7 @@ unset VERSION
 branch_version() {
   local branch y m d
   branch="$(git branch --show-current 2>/dev/null || true)"
-  if [[ "$branch" =~ ^hhvm-oss-([0-9]{4})([0-9]{2})([0-9]{2})$ ]]; then
+  if [[ "$branch" =~ ^hhvm-oss-([0-9]{4})([0-9]{2})([0-9]{2})(-arm)?$ ]]; then
     y="${BASH_REMATCH[1]}"
     m="${BASH_REMATCH[2]}"
     d="${BASH_REMATCH[3]}"
@@ -79,7 +79,7 @@ branch_version() {
     return
   fi
 
-  echo "Set HHVM_VERSION or build from an hhvm-oss-YYYYMMDD branch." >&2
+  echo "Set HHVM_VERSION or build from an hhvm-oss-YYYYMMDD[-arm] branch." >&2
   exit 1
 }
 
