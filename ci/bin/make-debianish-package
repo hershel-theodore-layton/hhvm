@@ -9,7 +9,7 @@
 set -ex
 
 export DEBIAN_FRONTEND=noninteractive
-DEB_BUILD_OPTIONS="parallel=$(grep -E -c '^processor' /proc/cpuinfo)"
+DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:-parallel=${JOBS:-$(nproc)}}"
 export DEB_BUILD_OPTIONS
 
 DISTRO=${DISTRO:-"ubuntu-24.04-noble"}
@@ -96,7 +96,7 @@ if [ -x "$PREBUILD" ]; then
   source $PREBUILD
 fi
 rm -f ../"${PKGBASE}_${FULL_VERSION}"* ../"${PKGBASE}-dbg_${FULL_VERSION}"* ../"${PKGBASE}-dev_${FULL_VERSION}"*
-debuild --no-lintian -b -us -uc
+debuild -eJOBS -eCARGO_BUILD_JOBS -eOPAMJOBS -eCMAKE_BUILD_PARALLEL_LEVEL --no-lintian -b -us -uc
 
 cd ..
 CHANGES="$(find . -maxdepth 1 -type f -name "${PKGBASE}_${FULL_VERSION}_*.changes" -printf '%T@ %p\n' | sort -nr | awk 'NR == 1 { print $2 }')"

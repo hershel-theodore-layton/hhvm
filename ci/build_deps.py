@@ -76,6 +76,9 @@ def build_project(project: str):
         "--scratch-path", SCRATCH_PATH,
     ]
 
+    if os.environ.get("JOBS"):
+        cmd.extend(["--num-jobs", os.environ["JOBS"]])
+
     cmd.append(project)
 
     print(f"Building {project}...")

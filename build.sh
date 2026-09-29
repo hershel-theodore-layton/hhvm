@@ -90,6 +90,7 @@ VERSION="${HHVM_VERSION:-$(branch_version)}"
 
 export JOBS OUT DISTRO VERSION
 export DEB_BUILD_OPTIONS="${DEB_BUILD_OPTIONS:-parallel=${JOBS}}"
+export CARGO_BUILD_JOBS="$JOBS" OPAMJOBS="$JOBS" CMAKE_BUILD_PARALLEL_LEVEL="$JOBS"
 
 apt_get() {
   apt-get -o Acquire::Retries=3 "$@"
