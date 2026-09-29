@@ -184,7 +184,7 @@ bool FieldGenerator::gen(char field, const std::string& arg, T& out) {
     break;
   case 'q':
     {
-      String b, q;
+      OptString b, q;
       RequestURI::splitURL(transport->getUrl(), b, q);
       if (q.isNull() || q.empty()) return false;
       out = folly::to<T>(q.c_str());
