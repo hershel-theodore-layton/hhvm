@@ -75,7 +75,7 @@ branch_version() {
     y="${BASH_REMATCH[1]}"
     m="${BASH_REMATCH[2]}"
     d="${BASH_REMATCH[3]}"
-    printf '%s.%s.%s\n' "$y" "$m" "$d"
+    printf '%s.%s.%s\n' "${y:2}" "$m" "$d"
     return
   fi
 
