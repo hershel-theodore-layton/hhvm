@@ -56,6 +56,7 @@ def build_project(project: str):
         # Ensure nothing tries to build shared libraries (glog and gflags manifests are notably guilty of this).
         "BUILD_SHARED_LIBS": "Off",
         "BUILD_STATIC_LIBS": "On",
+        "CMAKE_POLICY_VERSION_MINIMUM": "3.5",
         # mcrouter doesn't have the standard getdeps modules mirrored to its repo, so we set it here.
         # This must also be set for all other projects we build because `extra-cmake-defines`
         # is factored into project install dir name calculations, so only setting it for mcrouter
