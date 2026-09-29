@@ -113,9 +113,11 @@ export PATH="/root/.cargo/bin:$PATH"
 if ! command -v rustup >/dev/null 2>&1; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable
 fi
-rustup toolchain install nightly --profile minimal
-rustup component add rustfmt --toolchain nightly
-rustup default nightly
+# Hack still uses box_patterns, removed from Rust nightly on 2026-08-25.
+RUST_TOOLCHAIN="nightly-2026-08-24"
+rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal
+rustup component add rustfmt --toolchain "$RUST_TOOLCHAIN"
+rustup default "$RUST_TOOLCHAIN"
 
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   mapfile -t SUBMODULES < <(git config --file .gitmodules --get-regexp 'submodule\..*\.path' | awk '{ print $2 }')
